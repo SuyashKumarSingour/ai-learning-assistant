@@ -5,4 +5,4 @@ app=FastAPI()
 
 @app.get("/")
 def root():
-    return {"message": "Hello from AI Learning Assistant Backend! "}
+    return {"message": "Hello from AI Learning Assistant Backend!"}
