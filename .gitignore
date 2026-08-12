@@ -1,16 +1,5 @@
-# Python
+.env
+.venv/
 __pycache__/
 *.pyc
-
-# Virtual Environment
-venv/
-.venv/
-
-# Environment Variables
-.env
-
-# VS Code
-.vscode/
-
-# macOS
-.DS_Store
+app/documents/

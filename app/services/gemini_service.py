@@ -6,11 +6,11 @@ from app.memory.conversation import conversation_history
 from app.config import settings
 from google import genai
 
+from app.clients.google_client import client
 
 
 
 
-client = genai.Client(api_key=settings.GEMINI_API_KEY)
 
 
 def generate_response(user_message: str) -> str:
