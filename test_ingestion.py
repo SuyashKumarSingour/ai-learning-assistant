@@ -1,8 +1,10 @@
 from app.services.ingestion_service import ingest_document
 
 
-file_path = "app/documents/python_language_5_pages.pdf"
+def test_ingest_document():
+    file_path = "app/documents/python_language_5_pages.pdf"
 
-result = ingest_document(file_path)
+    result = ingest_document(file_path)
 
-print("Ingestion result:", result)
+    assert result["document_id"]
+    assert result["chunks_inserted"] > 0
