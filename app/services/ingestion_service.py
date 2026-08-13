@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from qdrant_client.models import PointStruct
+from qdrant_client.models import PointStruct, VectorParams, Distance
 
 from app.clients.qdrant_client import client
 from app.services.extraction_service import extract_pdf
@@ -9,9 +9,19 @@ from app.services.embedding_service import generate_embedding
 
 
 COLLECTION_NAME = "document_chunks"
+VECTOR_SIZE = 3072
 
 
 def ingest_document(file_path: str) -> dict:
+
+    if not client.collection_exists(COLLECTION_NAME):
+        client.create_collection(
+            collection_name=COLLECTION_NAME,
+            vectors_config=VectorParams(
+                size=VECTOR_SIZE,
+                distance=Distance.COSINE,
+            ),
+        )
 
     document_id = str(uuid4())
 
