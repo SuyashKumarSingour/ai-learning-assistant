@@ -1,14 +1,25 @@
+from uuid import uuid4
+from pathlib import Path
+
 from fastapi import APIRouter, UploadFile, File, HTTPException
-import os
 
 from app.services.ingestion_service import ingest_document
 
 
 router = APIRouter()
 
+UPLOAD_DIR = Path("app/documents")
+MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
+
 
 @router.post("/documents/upload")
 async def upload_document(file: UploadFile = File(...)):
+
+    if not file.filename:
+        raise HTTPException(
+            status_code=400,
+            detail="A filename is required.",
+        )
 
     if not file.filename.lower().endswith(".pdf"):
         raise HTTPException(
@@ -16,16 +27,36 @@ async def upload_document(file: UploadFile = File(...)):
             detail="Only PDF files are supported.",
         )
 
-    upload_dir = "app/documents"
+    file_content = await file.read()
 
-    os.makedirs(upload_dir, exist_ok=True)
+    if not file_content:
+        raise HTTPException(
+            status_code=400,
+            detail="The uploaded file is empty.",
+        )
 
-    file_path = os.path.join(upload_dir, file.filename)
+    if len(file_content) > MAX_FILE_SIZE:
+        raise HTTPException(
+            status_code=413,
+            detail="The file size must not exceed 10 MB.",
+        )
 
-    with open(file_path, "wb") as buffer:
-        buffer.write(await file.read())
+    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
-    result = ingest_document(file_path)
+    safe_filename = f"{uuid4()}.pdf"
+    file_path = UPLOAD_DIR / safe_filename
+
+    with file_path.open("wb") as buffer:
+        buffer.write(file_content)
+
+    try:
+        result = ingest_document(str(file_path))
+    except ValueError as exc:
+        file_path.unlink(missing_ok=True)
+        raise HTTPException(
+            status_code=400,
+            detail=str(exc),
+        ) from exc
 
     return {
         "message": "Document uploaded and ingested successfully.",

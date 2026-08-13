@@ -13,10 +13,17 @@ def answer_question(
         document_id=document_id,
     )
 
+    if not results:
+        return "I could not find relevant information in the uploaded documents."
+
     context_parts = []
 
     for result in results:
-        context_parts.append(result.payload["text"])
+        if result.payload and "text" in result.payload:
+            context_parts.append(result.payload["text"])
+
+    if not context_parts:
+        return "I could not find relevant information in the uploaded documents."
 
     context = "\n\n".join(context_parts)
 
