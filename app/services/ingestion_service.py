@@ -12,7 +12,7 @@ COLLECTION_NAME = "document_chunks"
 VECTOR_SIZE = 3072
 
 
-def ingest_document(file_path: str) -> dict:
+def ingest_document(file_path: str, user_id: str) -> dict:
 
     if not client.collection_exists(COLLECTION_NAME):
         client.create_collection(
@@ -39,6 +39,7 @@ def ingest_document(file_path: str) -> dict:
             id=str(uuid4()),
             vector=vector,
             payload={
+                "user_id": user_id,
                 "document_id": document_id,
                 "text": chunk,
                 "source": file_path,

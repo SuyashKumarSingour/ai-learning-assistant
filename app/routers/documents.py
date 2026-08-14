@@ -1,8 +1,9 @@
 from uuid import uuid4
 from pathlib import Path
 
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
 
+from app.auth.dependencies import get_current_user
 from app.services.ingestion_service import ingest_document
 
 
@@ -13,7 +14,10 @@ MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
 
 
 @router.post("/documents/upload")
-async def upload_document(file: UploadFile = File(...)):
+async def upload_document(
+    file: UploadFile = File(...),
+    user_id: str = Depends(get_current_user),
+):
 
     if not file.filename:
         raise HTTPException(
@@ -50,7 +54,10 @@ async def upload_document(file: UploadFile = File(...)):
         buffer.write(file_content)
 
     try:
-        result = ingest_document(str(file_path))
+        result = ingest_document(
+            str(file_path),
+            user_id,
+        )
     except ValueError as exc:
         file_path.unlink(missing_ok=True)
         raise HTTPException(

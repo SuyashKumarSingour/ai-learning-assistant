@@ -4,11 +4,13 @@ from app.services.generation_service import generate_answer
 
 def answer_question(
     question: str,
+    user_id: str,
     document_id: str | None = None,
 ) -> str:
 
     results = retrieve_chunks(
         query=question,
+        user_id=user_id,
         limit=3,
         document_id=document_id,
     )

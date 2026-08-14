@@ -1,6 +1,7 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 
+from app.auth.dependencies import get_current_user
 from app.services.rag_service import answer_question
 
 
@@ -22,10 +23,14 @@ class ChatResponse(BaseModel):
 
 
 @router.post("/chat", response_model=ChatResponse)
-def chat(request: ChatRequest):
+def chat(
+    request: ChatRequest,
+    user_id: str = Depends(get_current_user),
+):
 
     ai_response = answer_question(
         question=request.message,
+        user_id=user_id,
         document_id=request.document_id,
     )
 
