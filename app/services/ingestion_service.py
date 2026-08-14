@@ -12,7 +12,11 @@ COLLECTION_NAME = "document_chunks"
 VECTOR_SIZE = 3072
 
 
-def ingest_document(file_path: str, user_id: str) -> dict:
+def ingest_document(
+    file_path: str,
+    user_id: str,
+    document_id: str,
+) -> dict:
 
     if not client.collection_exists(COLLECTION_NAME):
         client.create_collection(
@@ -22,8 +26,6 @@ def ingest_document(file_path: str, user_id: str) -> dict:
                 distance=Distance.COSINE,
             ),
         )
-
-    document_id = str(uuid4())
 
     text = extract_pdf(file_path)
 

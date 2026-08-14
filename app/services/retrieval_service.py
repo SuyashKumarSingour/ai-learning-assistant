@@ -43,3 +43,28 @@ def retrieve_chunks(
     )
 
     return results.points
+
+
+def delete_document_chunks(
+    document_id: str,
+    user_id: str,
+):
+    conditions = [
+        FieldCondition(
+            key="user_id",
+            match=MatchValue(value=user_id),
+        ),
+        FieldCondition(
+            key="document_id",
+            match=MatchValue(value=document_id),
+        ),
+    ]
+
+    query_filter = Filter(
+        must=conditions
+    )
+
+    client.delete(
+        collection_name=COLLECTION_NAME,
+        points_selector=query_filter,
+    )

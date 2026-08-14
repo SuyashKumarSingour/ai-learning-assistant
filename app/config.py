@@ -14,6 +14,7 @@ class Settings:
     QDRANT_PORT = int(os.getenv("QDRANT_PORT", "6333"))
 
     SUPABASE_URL = os.getenv("SUPABASE_URL")
+    SUPABASE_SECRET_KEY = os.getenv("SUPABASE_SECRET_KEY")
 
 
 settings = Settings()
