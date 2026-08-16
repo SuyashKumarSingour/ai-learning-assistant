@@ -1,4 +1,5 @@
 import os
+
 from dotenv import load_dotenv
 
 
@@ -10,8 +11,8 @@ class Settings:
     GEMINI_MODEL = "gemini-2.5-flash"
     EMBEDDING_MODEL = "gemini-embedding-001"
 
-    QDRANT_HOST = os.getenv("QDRANT_HOST", "localhost")
-    QDRANT_PORT = int(os.getenv("QDRANT_PORT", "6333"))
+    QDRANT_URL = os.getenv("QDRANT_URL")
+    QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
 
     SUPABASE_URL = os.getenv("SUPABASE_URL")
     SUPABASE_SECRET_KEY = os.getenv("SUPABASE_SECRET_KEY")

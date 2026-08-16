@@ -1,5 +1,5 @@
-from uuid import uuid4
 from pathlib import Path
+from uuid import uuid4
 
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
 
@@ -25,7 +25,6 @@ async def upload_document(
     file: UploadFile = File(...),
     user_id: str = Depends(get_current_user),
 ):
-
     if not file.filename:
         raise HTTPException(
             status_code=400,
@@ -169,11 +168,13 @@ def delete_document_by_id(
                 detail="Document not found.",
             )
 
+        # Delete the document's vectors from Qdrant.
         delete_document_chunks(
             document_id=document_id,
             user_id=user_id,
         )
 
+        # Delete the document record from Supabase.
         deleted = delete_document(
             document_id=document_id,
             user_id=user_id,
@@ -184,6 +185,12 @@ def delete_document_by_id(
                 status_code=404,
                 detail="Document not found.",
             )
+
+        # Delete the physical PDF from the local filesystem.
+        file_path = document.get("file_path")
+
+        if file_path:
+            Path(file_path).unlink(missing_ok=True)
 
         return {
             "message": "Document deleted successfully.",

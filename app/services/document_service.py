@@ -73,7 +73,7 @@ def get_document(
     params = {
         "id": f"eq.{document_id}",
         "user_id": f"eq.{user_id}",
-        "select": "id,filename,file_size,chunks_count,created_at",
+        "select": "id,filename,file_path,file_size,chunks_count,created_at",
     }
 
     response = requests.get(
